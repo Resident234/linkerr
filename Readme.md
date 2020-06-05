@@ -5,6 +5,10 @@ Parse hrefs, image paths, scripts paths and links from site.
 ## Usage
 
 ```bash
+npm install
+```
+
+```bash
 node ./index.js -u INSERT_YOUR_URL
 ```
 
