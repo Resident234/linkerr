@@ -37,36 +37,36 @@ const main = async () => {
             try {
                 const siteName = URL_UTILS.splitURL(formatedURL).authority;
                 const outputPath = program.output || path.join(__dirname, "/output");
-                const fileName = program.fileName || siteName + "_" + getCurrentDate() + ".json";
+                const fileNameBase = program.fileName || siteName;
                 const crawlingMode = program.crawlingMode || 'linear';
 
                 //если crawlingMode = linear , то formatedURL - это стартовая страница (например https://www.php.net/manual/en/copyright.php) , с которой мы начнем листать страницы
-
-                if (isFileAlreadyExist(outputPath, fileName)) {
-                    throw new Error(
-                        chalk.red("File with name ") +
-                        chalk.cyan(fileName) +
-                        chalk.red(" already exist at ") +
-                        chalk.cyan(outputPath));
-                }
-
-                let nextPageHref = formatedURL;
+                //node ./index.js -u https://www.php.net/manual/en/copyright.php
+                //node ./index.js -u https://www.php.net/manual/ru/function.preg-match.php
+                let pageHref = formatedURL;
                 while (1) {
-                    let parsedData = await parse(nextPageHref, crawlingMode);
-                    if (parsedData.nextPageHref) {
-                        nextPageHref = parsedData.nextPageHref[0];
-                        console.log(nextPageHref);
+                    let parsedData = await parse(pageHref, crawlingMode);
+                    let currentFileName = fileNameBase + "_" + getCurrentDate() + (Math.random() * (1000 - 1) + 1) + ".json";
+                    if (isFileAlreadyExist(outputPath, currentFileName)) {
+                        throw new Error(
+                            chalk.red("File with name ") +
+                            chalk.cyan(currentFileName) +
+                            chalk.red(" already exist at ") +
+                            chalk.cyan(outputPath));
+                    }
+                    console.log(parsedData);
 
+                    await saveFile(outputPath, currentFileName, JSON.stringify(parsedData));
+                    spinner.succeed(`Site ${chalk.green(pageHref)} have been parsed`);
+                    spinner.succeed(`Info saved at ${chalk.cyan(outputPath)}/${chalk.cyan(currentFileName)}`);
+
+                    if (parsedData.nextPageHref) {
+                        pageHref = parsedData.nextPageHref[0];
                     } else {
                         break;
                     }
                 }
-                console.log(parsedData);
 
-                await saveFile(outputPath, fileName, JSON.stringify(parsedData));
-
-                spinner.succeed(`Site ${chalk.green(formatedURL)} have been parsed`);
-                spinner.succeed(`Info saved at ${chalk.cyan(outputPath)}/${chalk.cyan(fileName)}`);
             } catch (e) {
                 spinner.fail(e.message);
             }
