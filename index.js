@@ -36,7 +36,7 @@ const main = async () => {
 
             try {
                 const siteName = URL_UTILS.splitURL(formatedURL).authority;
-                const outputPath = program.output || path.join(__dirname, "/output/1");
+                const outputPath = program.output || path.join(__dirname, "/output/6");
                 const fileNameBase = program.fileName || siteName;
                 const crawlingMode = program.crawlingMode || 'linear';
 
@@ -50,7 +50,7 @@ const main = async () => {
                     if (parsedData.comments.length) {
                         let arUrlSplitted = parsedData.url.split("/");
                         let pageName = arUrlSplitted[arUrlSplitted.length - 1];
-                        let currentFileName = fileNameBase + "_" + pageName + ".json";
+                        let currentFileName = fileNameBase + "_" + pageName + ".md";
                         if (isFileAlreadyExist(outputPath, currentFileName)) {
                             throw new Error(
                                 chalk.red("File with name ") +
@@ -58,7 +58,17 @@ const main = async () => {
                                 chalk.red(" already exist at ") +
                                 chalk.cyan(outputPath));
                         }
-                        await saveFile(outputPath, currentFileName, JSON.stringify(parsedData));
+                        let content = "# " + parsedData.title + "\n\n";
+
+                        for (let i = 0; i < parsedData.comments.length; i++) {
+                            let contentRow = "\n\n" + parsedData.comments[i] + "\n\n" + "#";
+                            content = content + contentRow;
+                        }
+                        content = content.replace(new RegExp('<code>', 'g'), '');
+                        content = content.replace(new RegExp('</code>', 'g'), '');/** @todo нормальную обработку текста сделать */
+                        content = content + "\n\n" + "**[⬆ to root](/)**";
+
+                        await saveFile(outputPath, currentFileName, content);
                         spinner.succeed(`Info saved at ${chalk.cyan(outputPath)}/${chalk.cyan(currentFileName)}`);
                     }
 
