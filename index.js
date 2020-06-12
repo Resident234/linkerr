@@ -36,7 +36,7 @@ const main = async () => {
 
             try {
                 const siteName = URL_UTILS.splitURL(formatedURL).authority;
-                const outputPath = program.output || path.join(__dirname, "/output");
+                const outputPath = program.output || path.join(__dirname, "/output/1");
                 const fileNameBase = program.fileName || siteName;
                 const crawlingMode = program.crawlingMode || 'linear';
 
@@ -46,19 +46,21 @@ const main = async () => {
                 let pageHref = formatedURL;
                 while (1) {
                     let parsedData = await parse(pageHref, crawlingMode);
-                    let currentFileName = fileNameBase + "_" + getCurrentDate() + (Math.random() * (1000 - 1) + 1) + ".json";
-                    if (isFileAlreadyExist(outputPath, currentFileName)) {
-                        throw new Error(
-                            chalk.red("File with name ") +
-                            chalk.cyan(currentFileName) +
-                            chalk.red(" already exist at ") +
-                            chalk.cyan(outputPath));
+                    spinner.succeed(`Page ${chalk.green(pageHref)} have been parsed`);
+                    if (parsedData.comments.length) {
+                        let arUrlSplitted = parsedData.url.split("/");
+                        let pageName = arUrlSplitted[arUrlSplitted.length - 1];
+                        let currentFileName = fileNameBase + "_" + pageName + ".json";
+                        if (isFileAlreadyExist(outputPath, currentFileName)) {
+                            throw new Error(
+                                chalk.red("File with name ") +
+                                chalk.cyan(currentFileName) +
+                                chalk.red(" already exist at ") +
+                                chalk.cyan(outputPath));
+                        }
+                        await saveFile(outputPath, currentFileName, JSON.stringify(parsedData));
+                        spinner.succeed(`Info saved at ${chalk.cyan(outputPath)}/${chalk.cyan(currentFileName)}`);
                     }
-                    console.log(parsedData);
-
-                    await saveFile(outputPath, currentFileName, JSON.stringify(parsedData));
-                    spinner.succeed(`Site ${chalk.green(pageHref)} have been parsed`);
-                    spinner.succeed(`Info saved at ${chalk.cyan(outputPath)}/${chalk.cyan(currentFileName)}`);
 
                     if (parsedData.nextPageHref) {
                         pageHref = parsedData.nextPageHref[0];
