@@ -7,7 +7,7 @@ const chalk = require("chalk");
 const path = require("path");
 
 const { parse } = require("./lib/parse");
-const { saveFile, isFileAlreadyExist } = require("./lib/file-system");
+const { saveFile, saveFileForce, isFileAlreadyExist } = require("./lib/file-system");
 const { getCurrentDate } = require("./lib/time");
 
 const URL_UTILS = require("./lib/url");
@@ -36,10 +36,11 @@ const main = async () => {
 
             try {
                 const siteName = URL_UTILS.splitURL(formatedURL).authority;
-                const outputPath = program.output || path.join(__dirname, "/output/6");
                 const fileNameBase = program.fileName || siteName;
+                const outputPath = program.output || path.join(__dirname, "/output/" + fileNameBase);
                 const crawlingMode = program.crawlingMode || 'linear';
 
+                let nav = [];
                 //если crawlingMode = linear , то formatedURL - это стартовая страница (например https://www.php.net/manual/en/copyright.php) , с которой мы начнем листать страницы
                 //node ./index.js -u https://www.php.net/manual/en/copyright.php
                 //node ./index.js -u https://www.php.net/manual/ru/function.preg-match.php
@@ -51,13 +52,19 @@ const main = async () => {
                         let arUrlSplitted = parsedData.url.split("/");
                         let pageName = arUrlSplitted[arUrlSplitted.length - 1];
                         let currentFileName = fileNameBase + "_" + pageName + ".md";
-                        if (isFileAlreadyExist(outputPath, currentFileName)) {
+                        for (let i = 0; i < parsedData.nav.length; i++) {
+                            let val = new Array(i + 1);
+                            nav[parsedData.nav[i]] = val.fill('#').join('') + ' ';
+                        }
+                        nav["(/" + currentFileName + ")"] = "[" + parsedData.title + "]";
+
+                        /*if (isFileAlreadyExist(outputPath, currentFileName)) {
                             throw new Error(
                                 chalk.red("File with name ") +
                                 chalk.cyan(currentFileName) +
                                 chalk.red(" already exist at ") +
                                 chalk.cyan(outputPath));
-                        }
+                        }*/ /** @todo пусть переписывает пока , позже в настройку вынести */
                         let content = "# " + parsedData.title + "\n\n";
 
                         for (let i = 0; i < parsedData.comments.length; i++) {
@@ -66,10 +73,20 @@ const main = async () => {
                         }
                         content = content.replace(new RegExp('<code>', 'g'), '');
                         content = content.replace(new RegExp('</code>', 'g'), '');/** @todo нормальную обработку текста сделать */
-                        content = content + "\n\n" + "**[⬆ to root](/)**";
+                        content = content + "\n\n" + "[Official documentation page](" + parsedData.url + ")";
+                        content = content + "\n\n" + "**[To root](/README.md)**";
 
                         await saveFile(outputPath, currentFileName, content);
                         spinner.succeed(`Info saved at ${chalk.cyan(outputPath)}/${chalk.cyan(currentFileName)}`);
+
+                        content = "";
+                        for (var key in nav) {
+                            let contentRow = nav[key] + key + "\n\n";
+                            content = content + contentRow;
+                        }
+                        await saveFile(outputPath, 'README.md', content);
+
+
                     }
 
                     if (parsedData.nextPageHref) {
