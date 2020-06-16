@@ -7,7 +7,7 @@ const chalk = require("chalk");
 const path = require("path");
 
 const { parse } = require("./lib/parse");
-const { saveFile, saveFileForce, isFileAlreadyExist } = require("./lib/file-system");
+const { saveFile, saveFileForce, isFileAlreadyExist, createDirIfNotExist } = require("./lib/file-system");
 const { getCurrentDate } = require("./lib/time");
 
 const URL_UTILS = require("./lib/url");
@@ -49,6 +49,7 @@ const main = async () => {
                     let parsedData = await parse(pageHref, crawlingMode);
                     spinner.succeed(`Page ${chalk.green(pageHref)} have been parsed`);
                     if (parsedData.comments.length) {
+                        console.log(parsedData.title);
                         let arUrlSplitted = parsedData.url.split("/");
                         let pageName = arUrlSplitted[arUrlSplitted.length - 1];
                         let currentFileName = fileNameBase + "_" + pageName + ".md";
@@ -57,6 +58,7 @@ const main = async () => {
                             nav[parsedData.nav[i]] = val.fill('#').join('') + ' ';
                         }
                         nav["(/" + currentFileName + ")"] = "[" + parsedData.title + "]";
+
 
                         /*if (isFileAlreadyExist(outputPath, currentFileName)) {
                             throw new Error(
