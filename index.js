@@ -57,7 +57,7 @@ const main = async () => {
                             let val = new Array(i + 1);
                             nav[parsedData.nav[i]] = val.fill('#').join('') + ' ';
                         }
-                        nav["(/" + currentFileName + ")"] = "[" + parsedData.title + "]";
+                        nav["(/pages/" + currentFileName + ")"] = "[" + parsedData.title + "]";
 
 
                         /*if (isFileAlreadyExist(outputPath, currentFileName)) {
@@ -78,7 +78,7 @@ const main = async () => {
                         content = content + "\n\n" + "[Official documentation page](" + parsedData.url + ")";
                         content = content + "\n\n" + "**[To root](/README.md)**";
 
-                        await saveFile(outputPath, currentFileName, content);
+                        await saveFile(outputPath + '/pages', currentFileName, content);
                         spinner.succeed(`Info saved at ${chalk.cyan(outputPath)}/${chalk.cyan(currentFileName)}`);
 
                         content = "";
