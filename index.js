@@ -49,16 +49,16 @@ const main = async () => {
                     let parsedData = await parse(pageHref, crawlingMode);
                     spinner.succeed(`Page ${chalk.green(pageHref)} have been parsed`);
                     if (parsedData.comments.length) {
-                        console.log(parsedData.title);
                         let arUrlSplitted = parsedData.url.split("/");
                         let pageName = arUrlSplitted[arUrlSplitted.length - 1];
                         let currentFileName = fileNameBase + "_" + pageName + ".md";
                         for (let i = 0; i < parsedData.nav.length; i++) {
-                            let val = new Array(i + 1);
+                            let arrayLength = i + 1;
+                            if (arrayLength > 6) arrayLength = 6;
+                            let val = new Array(arrayLength);
                             nav[parsedData.nav[i]] = val.fill('#').join('') + ' ';
                         }
                         nav["(/pages/" + currentFileName + ")"] = "[" + parsedData.title + "]";
-
 
                         /*if (isFileAlreadyExist(outputPath, currentFileName)) {
                             throw new Error(
@@ -77,6 +77,7 @@ const main = async () => {
                         content = content.replace(new RegExp('</code>', 'g'), '');/** @todo нормальную обработку текста сделать */
                         content = content + "\n\n" + "[Official documentation page](" + parsedData.url + ")";
                         content = content + "\n\n" + "**[To root](/README.md)**";
+                        /** @todo текст , который находится внутри <?php ?> обернуть в ``` ``` и удалить html теги */
 
                         await saveFile(outputPath + '/pages', currentFileName, content);
                         spinner.succeed(`Info saved at ${chalk.cyan(outputPath)}/${chalk.cyan(currentFileName)}`);
