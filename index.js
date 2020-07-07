@@ -75,19 +75,22 @@ const main = async () => {
                         }
                         content = content.replace(new RegExp('<code>', 'g'), '');
                         content = content.replace(new RegExp('</code>', 'g'), '');
-                        content = content.replace(new RegExp('<\\?php', 'g'), '\n\n```\n[php');
-                        content = content.replace(new RegExp('\\?>', 'g'), 'php]\n```\n');
-                        content = content.replace(new RegExp('&lt;\\?php', 'g'), '\n\n```\n[php');
-                        content = content.replace(new RegExp('\\?&gt;', 'g'), 'php]\n```\n');
                         content = content.replace(/<br>/gm, '\n');
+
+                        content = content.replace(new RegExp('<\\?php', 'g'), '[php');
+                        content = content.replace(new RegExp('\\?>', 'g'), 'php]');
+                        content = content.replace(new RegExp('&lt;\\?php', 'g'), '[php');
+                        content = content.replace(new RegExp('\\?&gt;', 'g'), 'php]');
+
                         content = content.replace(/(<([^>]+)>)/ig,"");
-                        content = content.replace(new RegExp('\\[php', 'g'), '<?php');
-                        content = content.replace(new RegExp('php\]', 'g'), '?>');
+
+                        content = content.replace(new RegExp('\\[php', 'g'), '\n\n```\n<?php');
+                        content = content.replace(new RegExp('php\]', 'g'), '?>\n```\n');
+
 
                         /** @todo нормальную обработку текста сделать */
                         content = content + "\n\n" + "[Official documentation page](" + parsedData.url + ")";
                         content = content + "\n\n" + "**[To root](/README.md)**";
-                        /** @todo текст , который находится внутри <?php ?> обернуть в ``` ``` и удалить html теги */
 
                         await saveFile(outputPath + '/pages', currentFileName, content);
                         spinner.succeed(`Info saved at ${chalk.cyan(outputPath)}/${chalk.cyan(currentFileName)}`);
