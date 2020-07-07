@@ -6,9 +6,9 @@ const chalk = require("chalk");
 
 const path = require("path");
 
-const { parse } = require("./lib/parse");
-const { saveFile, saveFileForce, isFileAlreadyExist, createDirIfNotExist } = require("./lib/file-system");
-const { getCurrentDate } = require("./lib/time");
+const {parse} = require("./lib/parse");
+const {saveFile, saveFileForce, isFileAlreadyExist, createDirIfNotExist} = require("./lib/file-system");
+const {getCurrentDate} = require("./lib/time");
 
 const URL_UTILS = require("./lib/url");
 
@@ -22,14 +22,14 @@ const main = async () => {
         .option("-m, --crawlingMode [Crawling mode]", "Crawling mode")
         .parse(process.argv);
 
-    const PARSE_SITE_URL    = program.url;
-    const BASE_URL          = program.url;
+    const PARSE_SITE_URL = program.url;
+    const BASE_URL = program.url;
 
     if (PARSE_SITE_URL) {
 
         if (URL_UTILS.isUrlValid(PARSE_SITE_URL)) {
-            const formatedURL   = URL_UTILS.formatToStandard(PARSE_SITE_URL);
-            const baseURL       = URL_UTILS.formatToStandard(BASE_URL);
+            const formatedURL = URL_UTILS.formatToStandard(PARSE_SITE_URL);
+            const baseURL = URL_UTILS.formatToStandard(BASE_URL);
 
             const spinner = ora();
             spinner.start(`Starting parse ${formatedURL}`);
@@ -59,14 +59,14 @@ const main = async () => {
                         }
                         nav["(/" + currentFileName + ")"] = "[" + parsedData.title + "]";
 
-
                         /*if (isFileAlreadyExist(outputPath, currentFileName)) {
                             throw new Error(
                                 chalk.red("File with name ") +
                                 chalk.cyan(currentFileName) +
                                 chalk.red(" already exist at ") +
                                 chalk.cyan(outputPath));
-                        }*/ /** @todo пусть переписывает пока , позже в настройку вынести */
+                        }*/
+                        /** @todo пусть переписывает пока , позже в настройку вынести */
                         let content = "# " + parsedData.title + "\n\n";
 
                         for (let i = 0; i < parsedData.comments.length; i++) {
@@ -74,7 +74,17 @@ const main = async () => {
                             content = content + contentRow;
                         }
                         content = content.replace(new RegExp('<code>', 'g'), '');
-                        content = content.replace(new RegExp('</code>', 'g'), '');/** @todo нормальную обработку текста сделать */
+                        content = content.replace(new RegExp('</code>', 'g'), '');
+                        content = content.replace(new RegExp('<\\?php', 'g'), '\n\n```\n[php');
+                        content = content.replace(new RegExp('\\?>', 'g'), 'php]\n```\n');
+                        content = content.replace(new RegExp('&lt;\\?php', 'g'), '\n\n```\n[php');
+                        content = content.replace(new RegExp('\\?&gt;', 'g'), 'php]\n```\n');
+                        content = content.replace(/<br>/gm, '\n');
+                        content = content.replace(/(<([^>]+)>)/ig,"");
+                        content = content.replace(new RegExp('\\[php', 'g'), '<?php');
+                        content = content.replace(new RegExp('php\]', 'g'), '?>');
+
+                        /** @todo нормальную обработку текста сделать */
                         content = content + "\n\n" + "[Official documentation page](" + parsedData.url + ")";
                         content = content + "\n\n" + "**[To root](/README.md)**";
 
@@ -87,7 +97,6 @@ const main = async () => {
                             content = content + contentRow;
                         }
                         await saveFile(outputPath, 'README.md', content);
-
 
                     }
 
