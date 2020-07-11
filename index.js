@@ -70,22 +70,39 @@ const main = async () => {
                         let content = "# " + parsedData.title + "\n\n";
 
                         for (let i = 0; i < parsedData.comments.length; i++) {
-                            let contentRow = "\n\n" + parsedData.comments[i] + "\n\n" + "#";
+                            let commentRowParsed = parsedData.comments[i];
+                            commentRowParsed = commentRowParsed.replace(/\n/g, '');
+                            let contentRow = "\n\n" + commentRowParsed + "\n\n" + "#";
                             content = content + contentRow;
                         }
+
                         content = content.replace(new RegExp('<code>', 'g'), '');
                         content = content.replace(new RegExp('</code>', 'g'), '');
-                        content = content.replace(/<br>/gm, '\n');
+                        content = content.replace(/<br>/gm, '=br=');
 
-                        content = content.replace(new RegExp('<\\?php', 'g'), '[php');
-                        content = content.replace(new RegExp('\\?>', 'g'), 'php]');
-                        content = content.replace(new RegExp('&lt;\\?php', 'g'), '[php');
-                        content = content.replace(new RegExp('\\?&gt;', 'g'), 'php]');
+                        content = content.replace(new RegExp('<\\?php', 'g'), '=php');
+                        content = content.replace(new RegExp('\\?>', 'g'), 'php=');
+                        content = content.replace(new RegExp('&lt;\\?php', 'g'), '=php');
+                        content = content.replace(new RegExp('\\?&gt;', 'g'), 'php=');
 
                         content = content.replace(/(<([^>]+)>)/ig,"");
 
-                        content = content.replace(new RegExp('\\[php', 'g'), '\n\n```\n<?php');
-                        content = content.replace(new RegExp('php\]', 'g'), '?>\n```\n');
+                        //content = content.replace(/[br]/gm, '\n'); - внутри [php ... php]
+                        //content = content.replace(/[br]/gm, '<br>'); - везде
+                        let arPHPCode = content.match(/(=php(.*)php=)/g);
+                        if (arPHPCode !== null) {
+                            for (let i = 0; i < arPHPCode.length; i++) {
+                                let arPHPCodeReplaced = arPHPCode[i].replace(/=br=/gm, '\n');
+                                content = content.replace(arPHPCode[i], arPHPCodeReplaced);
+                            }
+                        }
+                        content = content.replace(/=br=/gm, '<br>');
+
+                        content = content.replace(new RegExp('=php', 'g'), '\n\n```\n<?php');
+                        content = content.replace(new RegExp('php=', 'g'), '?>\n```\n');
+
+                        content = content.replace(new RegExp('&#xA0;', 'g'), ' ');
+                        content = content.replace(new RegExp('&quot;', 'g'), '"');
 
 
                         /** @todo нормальную обработку текста сделать */
