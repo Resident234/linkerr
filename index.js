@@ -97,7 +97,6 @@ const main = async () => {
                             let arPHPCode = commentRowParsed.match(/(-php(.*)php-)/g);
                             if (arPHPCode !== null) {
                                 for (let i = 0; i < arPHPCode.length; i++) {
-                                    // node ./index.js -u https://www.php.net/manual/en/book.memcached.php
                                     let arPHPCodeReplaced = arPHPCode[i].replace(/=br=/gm, '\n');
                                     arPHPCodeReplaced = arPHPCodeReplaced.replace(/-&gt;/gm, '->');
                                     arPHPCodeReplaced = arPHPCodeReplaced.replace(/&apos;/gm, '\'');
