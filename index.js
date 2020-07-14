@@ -72,38 +72,50 @@ const main = async () => {
                         for (let i = 0; i < parsedData.comments.length; i++) {
                             let commentRowParsed = parsedData.comments[i];
                             commentRowParsed = commentRowParsed.replace(/\n/g, '');
+
+                            commentRowParsed = commentRowParsed.replace(/<br>/gm, '=br=');
+
+                            commentRowParsed = commentRowParsed.replace(new RegExp('<\\?php', 'g'), '-php');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('\\?>', 'g'), 'php-');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?php', 'g'), '-php');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('\\?&gt;', 'g'), 'php-');
+
+                            let countOpenPHPTags = (commentRowParsed.match(/-php/g) || []).length;
+                            let countClosePHPTags = (commentRowParsed.match(/php-/g) || []).length;
+
+                            if (countOpenPHPTags !== 0 && countClosePHPTags === 0) {
+                                commentRowParsed = commentRowParsed.replace(new RegExp('</code>', 'g'), 'php-</code>');
+                            }
+                            commentRowParsed = commentRowParsed.replace(new RegExp('<code>', 'g'), '');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('</code>', 'g'), '');
+
+                            commentRowParsed = commentRowParsed.replace(/(<([^>]+)>)/ig,"");
+
+                            //content = content.replace(/[br]/gm, '\n'); - внутри [php ... php]
+                            //content = content.replace(/[br]/gm, '<br>'); - везде
+
+                            let arPHPCode = commentRowParsed.match(/(-php(.*)php-)/g);
+                            if (arPHPCode !== null) {
+                                for (let i = 0; i < arPHPCode.length; i++) {
+                                    // node ./index.js -u https://www.php.net/manual/en/book.memcached.php
+                                    let arPHPCodeReplaced = arPHPCode[i].replace(/=br=/gm, '\n');
+                                    arPHPCodeReplaced = arPHPCodeReplaced.replace(/-&gt;/gm, '->');
+                                    arPHPCodeReplaced = arPHPCodeReplaced.replace(/&apos;/gm, '\'');
+                                    arPHPCodeReplaced = arPHPCodeReplaced.replace(/=&gt;/gm, '=>');
+                                    commentRowParsed = commentRowParsed.replace(arPHPCode[i], arPHPCodeReplaced);
+                                }
+                            }
+                            commentRowParsed = commentRowParsed.replace(/=br=/gm, '<br>');
+
+                            commentRowParsed = commentRowParsed.replace(new RegExp('-php', 'g'), '\n\n```\n<?php');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('php-', 'g'), '?>\n```\n');
+
+                            commentRowParsed = commentRowParsed.replace(new RegExp('&#xA0;', 'g'), ' ');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('&quot;', 'g'), '"');
+
                             let contentRow = "\n\n" + commentRowParsed + "\n\n" + "#";
                             content = content + contentRow;
                         }
-
-                        content = content.replace(new RegExp('<code>', 'g'), '');
-                        content = content.replace(new RegExp('</code>', 'g'), '');
-                        content = content.replace(/<br>/gm, '=br=');
-
-                        content = content.replace(new RegExp('<\\?php', 'g'), '=php');
-                        content = content.replace(new RegExp('\\?>', 'g'), 'php=');
-                        content = content.replace(new RegExp('&lt;\\?php', 'g'), '=php');
-                        content = content.replace(new RegExp('\\?&gt;', 'g'), 'php=');
-
-                        content = content.replace(/(<([^>]+)>)/ig,"");
-
-                        //content = content.replace(/[br]/gm, '\n'); - внутри [php ... php]
-                        //content = content.replace(/[br]/gm, '<br>'); - везде
-                        let arPHPCode = content.match(/(=php(.*)php=)/g);
-                        if (arPHPCode !== null) {
-                            for (let i = 0; i < arPHPCode.length; i++) {
-                                let arPHPCodeReplaced = arPHPCode[i].replace(/=br=/gm, '\n');
-                                content = content.replace(arPHPCode[i], arPHPCodeReplaced);
-                            }
-                        }
-                        content = content.replace(/=br=/gm, '<br>');
-
-                        content = content.replace(new RegExp('=php', 'g'), '\n\n```\n<?php');
-                        content = content.replace(new RegExp('php=', 'g'), '?>\n```\n');
-
-                        content = content.replace(new RegExp('&#xA0;', 'g'), ' ');
-                        content = content.replace(new RegExp('&quot;', 'g'), '"');
-
 
                         /** @todo нормальную обработку текста сделать */
                         content = content + "\n\n" + "[Official documentation page](" + parsedData.url + ")";
