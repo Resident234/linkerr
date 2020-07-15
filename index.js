@@ -101,6 +101,8 @@ const main = async () => {
                                     arPHPCodeReplaced = arPHPCodeReplaced.replace(/-&gt;/gm, '->');
                                     arPHPCodeReplaced = arPHPCodeReplaced.replace(/&apos;/gm, '\'');
                                     arPHPCodeReplaced = arPHPCodeReplaced.replace(/=&gt;/gm, '=>');
+                                    arPHPCodeReplaced = arPHPCodeReplaced.replace(/&lt;/gm, '<');
+                                    arPHPCodeReplaced = arPHPCodeReplaced.replace(/&gt;/gm, '>');
                                     commentRowParsed = commentRowParsed.replace(arPHPCode[i], arPHPCodeReplaced);
                                 }
                             }
