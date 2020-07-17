@@ -75,16 +75,17 @@ const main = async () => {
 
                             commentRowParsed = commentRowParsed.replace(/<br>/gm, '=br=');
 
-                            commentRowParsed = commentRowParsed.replace(new RegExp('<\\?php', 'g'), '-php');
-                            commentRowParsed = commentRowParsed.replace(new RegExp('\\?>', 'g'), 'php-');
-                            commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?php', 'g'), '-php');
-                            commentRowParsed = commentRowParsed.replace(new RegExp('\\?&gt;', 'g'), 'php-');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('<\\?php', 'g'), '#linkerr_tag__php#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('\\?>', 'g'), '#php__linkerr_tag#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?php', 'g'), '#linkerr_tag__php#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?PHP', 'g'), '#linkerr_tag__php#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('\\?&gt;', 'g'), '#php__linkerr_tag#');
 
-                            let countOpenPHPTags = (commentRowParsed.match(/-php/g) || []).length;
-                            let countClosePHPTags = (commentRowParsed.match(/php-/g) || []).length;
+                            let countOpenPHPTags = (commentRowParsed.match(/#linkerr_tag__php#/g) || []).length;
+                            let countClosePHPTags = (commentRowParsed.match(/#php__linkerr_tag#/g) || []).length;
 
                             if (countOpenPHPTags !== 0 && countClosePHPTags === 0) {
-                                commentRowParsed = commentRowParsed.replace(new RegExp('</code>', 'g'), 'php-</code>');
+                                commentRowParsed = commentRowParsed.replace(new RegExp('</code>', 'g'), '#php__linkerr_tag#</code>');
                             }
                             commentRowParsed = commentRowParsed.replace(new RegExp('<code>', 'g'), '');
                             commentRowParsed = commentRowParsed.replace(new RegExp('</code>', 'g'), '');
@@ -94,7 +95,7 @@ const main = async () => {
                             //content = content.replace(/[br]/gm, '\n'); - внутри [php ... php]
                             //content = content.replace(/[br]/gm, '<br>'); - везде
 
-                            let arPHPCode = commentRowParsed.match(/(-php(.*)php-)/g);
+                            let arPHPCode = commentRowParsed.match(/(#linkerr_tag__php#(.*)#php__linkerr_tag#)/g);
                             if (arPHPCode !== null) {
                                 for (let i = 0; i < arPHPCode.length; i++) {
                                     let arPHPCodeReplaced = arPHPCode[i].replace(/=br=/gm, '\n');
@@ -108,8 +109,8 @@ const main = async () => {
                             }
                             commentRowParsed = commentRowParsed.replace(/=br=/gm, '<br>');
 
-                            commentRowParsed = commentRowParsed.replace(new RegExp('-php', 'g'), '\n\n```\n<?php');
-                            commentRowParsed = commentRowParsed.replace(new RegExp('php-', 'g'), '?>\n```\n');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__php#', 'g'), '\n\n```\n<?php');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#php__linkerr_tag#', 'g'), '?>\n```\n');
 
                             commentRowParsed = commentRowParsed.replace(new RegExp('&#xA0;', 'g'), ' ');
                             commentRowParsed = commentRowParsed.replace(new RegExp('&quot;', 'g'), '"');
