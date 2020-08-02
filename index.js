@@ -180,6 +180,7 @@ const main = async () => {
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_open_type2__ignored#', 'g'), '<?=');
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_open___in_quote#', 'g'), '``<?php``');
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_open___in_quote_type2#', 'g'), '"<?php "');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_close___in_quote#', 'g'), '``?>``');
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag___code#', 'g'), 'the ``<code>`` tag too');
 
                             commentRowParsed = commentRowParsed.replace(new RegExp('&#xA0;', 'g'), ' ');
