@@ -82,10 +82,10 @@ const main = async () => {
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?xml version=\\\\&quot;1.0\\\\&quot; encoding=\\\\&quot;utf-8\\\\&quot; \\?&gt', 'g'), '#linkerr_tag__xml_version_utf8_lower_case#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('!DOCTYPE.\\+\\?&gt', 'g'), '#linkerr_tag__doctype#');
 
-
                             commentRowParsed = commentRowParsed.replace(new RegExp('<\\?php', 'g'),     '#linkerr_tag_open#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('\\?>', 'g'),        '#linkerr_tag_close#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?php', 'g'),  '#linkerr_tag_open#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?', 'g'),     '#linkerr_tag_open#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?PHP', 'g'),  '#linkerr_tag_open#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('\\?&gt;', 'g'),     '#linkerr_tag_close#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('<rss>', 'g'),       '#linkerr_tag_open__rss#');
@@ -125,9 +125,9 @@ const main = async () => {
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_open__rss#', 'g'), '<rss>');
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_close__rss#', 'g'), '</rss>');
 
-                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__xml_version_utf8#', 'g'), '<?xml version="1.0" encoding="UTF-8" ?>');
-                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__xml_version#', 'g'), '<?xml version="1.0"?>');
-                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__xml_version_utf8_lower_case#', 'g'), '<?xml version=\\"1.0\\" encoding=\\"utf-8\\" ?>');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__xml_version_utf8#', 'g'), '``<?xml version="1.0" encoding="UTF-8" ?>``');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__xml_version#', 'g'), '``<?xml version="1.0"?>``');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__xml_version_utf8_lower_case#', 'g'), '``<?xml version=\\"1.0\\" encoding=\\"utf-8\\" ?>``');
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__doctype#', 'g'), '!DOCTYPE.+?>');
 
 
