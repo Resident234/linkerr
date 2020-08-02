@@ -72,6 +72,9 @@ const main = async () => {
                         for (let i = 0; i < parsedData.comments.length; i++) {
                             let commentRowParsed = parsedData.comments[i];
                             commentRowParsed = commentRowParsed.replace(/\n/g, '');
+                            commentRowParsed = commentRowParsed.replace(/<pre>/g, '');
+                            commentRowParsed = commentRowParsed.replace(/&lt;pre&gt;/g, '');
+                            commentRowParsed = commentRowParsed.replace(/&lt;\/pre&gt;/g, '');
                             commentRowParsed = commentRowParsed.replace(/<br>/gm, '=br=');
 
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; \\?&gt', 'g'), '#linkerr_tag__xml_version_utf8#');
