@@ -90,6 +90,7 @@ const main = async () => {
                             commentRowParsed = commentRowParsed.replace(new RegExp('!DOCTYPE.\\+\\?&gt', 'g'), '#linkerr_tag__doctype#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('.\\*\\?', 'g'), '#linkerr_tag__regexp1#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('\\(\/\\?', 'g'), '#linkerr_tag__regexp2#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('\\?\\?&gt;', 'g'), '#linkerr_tag__regexp3#');
 
                             commentRowParsed = commentRowParsed.replace(new RegExp('<\\?php', 'g'),     '#linkerr_tag_open#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('\\?>', 'g'),        '#linkerr_tag_close#');
@@ -141,6 +142,7 @@ const main = async () => {
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__doctype#', 'g'), '!DOCTYPE.+?>');
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__regexp1#', 'g'), '.*?');
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__regexp2#', 'g'), '(/?');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__regexp3#', 'g'), '??>');
 
 
                             commentRowParsed = commentRowParsed.replace(new RegExp('&#xA0;', 'g'), ' ');
