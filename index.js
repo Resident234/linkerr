@@ -77,6 +77,20 @@ const main = async () => {
                             commentRowParsed = commentRowParsed.replace(/&lt;\/pre&gt;/g, '');
                             commentRowParsed = commentRowParsed.replace(/<br>/gm, '=br=');
 
+                            commentRowParsed = commentRowParsed.replace(new RegExp('&lt;&lt;&lt;EOT', 'g'), '#linkerr_tag_open__eot#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('EOT;', 'g'), '#linkerr_tag_close__eot#');
+                            let arEOTCode = commentRowParsed.match(/(#linkerr_tag_open__eot#(.*)#linkerr_tag_close__eot#)/g);
+                            if (arEOTCode !== null) {
+                                for (let i = 0; i < arEOTCode.length; i++) {
+                                    let arEOTCodeReplaced = arEOTCode[i].replace(new RegExp('&lt;\\?php', 'g'), '#linkerr_tag_open__ignored#');
+                                    arEOTCodeReplaced = arEOTCodeReplaced.replace(new RegExp('\\?&gt;', 'g'), '#linkerr_tag_close__ignored#');
+                                    arEOTCodeReplaced = arEOTCodeReplaced.replace(new RegExp('&lt;\\?=', 'g'), '#linkerr_tag_open_type2__ignored#');
+                                    commentRowParsed = commentRowParsed.replace(arEOTCode[i], arEOTCodeReplaced);
+                                }
+                            }
+
+
+
                             commentRowParsed = commentRowParsed.replace(/OUTPUTS string\(21\) &quot;&lt;br&gt;EachNew&lt;br \/&gt;Line&quot;/gm, 'OUTPUTS string(21) "<br>EachNew<br />Line" ?>');
                             commentRowParsed = commentRowParsed.replace(/OUTPUTS string\(16\) &quot;Each&lt;br\/&gt;NewLine&quot;/gm, 'OUTPUTS string(16) "Each<br/>NewLine" ?>');
 
@@ -93,6 +107,7 @@ const main = async () => {
                             commentRowParsed = commentRowParsed.replace(new RegExp('\\?\\?&gt;', 'g'), '#linkerr_tag__regexp3#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('&gt;<\/span>=&lt;', 'g'), '#linkerr_tag__regexp4#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('\\(\\?&gt;', 'g'), '#linkerr_tag__regexp5#');
+                            //commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?= &quot;Some text &quot; . str_repeat\\(&quot;_-x-_ &quot;, 32\\);;; \\?&gt;', 'g'), '#linkerr_tag__regexp6#');
 
 
                             commentRowParsed = commentRowParsed.replace(new RegExp('<\\?php', 'g'),     '#linkerr_tag_open#');
@@ -131,6 +146,8 @@ const main = async () => {
                                     commentRowParsed = commentRowParsed.replace(arPHPCode[i], arPHPCodeReplaced);
                                 }
                             }
+
+
                             commentRowParsed = commentRowParsed.replace(/=br=/gm, '<br>');
 
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_open#', 'g'), '\n\n```\n<?php');
@@ -148,10 +165,18 @@ const main = async () => {
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__regexp3#', 'g'), '??>');
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__regexp4#', 'g'), '>=<');
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__regexp5#', 'g'), '(?>');
+                            //commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__regexp6#', 'g'), '``<?= "Some text " . str_repeat("_-x-_ ", 32);;; ?>``');
 
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_open__eot#', 'g'), '<<<EOT');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_close__eot#', 'g'), 'EOT;');
+
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_open__ignored#', 'g'), '<?php');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_close__ignored#', 'g'), '?>');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_open_type2__ignored#', 'g'), '<?=');
 
                             commentRowParsed = commentRowParsed.replace(new RegExp('&#xA0;', 'g'), ' ');
                             commentRowParsed = commentRowParsed.replace(new RegExp('&quot;', 'g'), '"');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\/h1&gt;', 'g'), '<\/h1>');
 
                             let contentRow = "\n\n" + commentRowParsed + "\n\n" + "---";
                             content = content + contentRow;
