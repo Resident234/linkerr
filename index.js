@@ -77,6 +77,10 @@ const main = async () => {
                             commentRowParsed = commentRowParsed.replace(/&lt;\/pre&gt;/g, '');
                             commentRowParsed = commentRowParsed.replace(/<br>/gm, '=br=');
 
+                            commentRowParsed = commentRowParsed.replace(/OUTPUTS string\(21\) &quot;&lt;br&gt;EachNew&lt;br \/&gt;Line&quot;/gm, 'OUTPUTS string(21) "<br>EachNew<br />Line" ?>');
+                            commentRowParsed = commentRowParsed.replace(/OUTPUTS string\(16\) &quot;Each&lt;br\/&gt;NewLine&quot;/gm, 'OUTPUTS string(16) "Each<br/>NewLine" ?>');
+
+
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; \\?&gt', 'g'), '#linkerr_tag__xml_version_utf8#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;\\?&gt', 'g'), '#linkerr_tag__xml_version_utf8#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?xml version=&apos;1.0&apos; encoding=&apos;UTF-8&apos;\\?&gt', 'g'), '#linkerr_tag__xml_version_utf8#');
