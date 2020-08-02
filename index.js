@@ -121,6 +121,7 @@ const main = async () => {
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?PHP', 'g'),  '#linkerr_tag_open#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?Php', 'g'),  '#linkerr_tag_open#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?', 'g'),     '#linkerr_tag_open#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('&lt;&percnt;', 'g'), '#linkerr_tag_open__percnt#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('\\?&gt;', 'g'),     '#linkerr_tag_close#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('<rss>', 'g'),       '#linkerr_tag_open__rss#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('</rss>', 'g'),      '#linkerr_tag_close__rss#');
@@ -157,6 +158,7 @@ const main = async () => {
 
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_open#', 'g'), '\n\n```\n<?php');
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_close#', 'g'), '?>\n```\n');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_open__percnt#', 'g'), '\n\n```\n<%');
 
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_open__rss#', 'g'), '<rss>');
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_close__rss#', 'g'), '</rss>');
