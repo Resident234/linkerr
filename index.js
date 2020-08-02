@@ -75,6 +75,7 @@ const main = async () => {
                             commentRowParsed = commentRowParsed.replace(/<pre>/g, '');
                             commentRowParsed = commentRowParsed.replace(/&lt;pre&gt;/g, '');
                             commentRowParsed = commentRowParsed.replace(/&lt;\/pre&gt;/g, '');
+                            commentRowParsed = commentRowParsed.replace(/~~~/g, '');
                             commentRowParsed = commentRowParsed.replace(/<br>/gm, '=br=');
 
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;&lt;&lt;EOT', 'g'), '#linkerr_tag_open__eot#');
