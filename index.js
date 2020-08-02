@@ -94,9 +94,9 @@ const main = async () => {
                             commentRowParsed = commentRowParsed.replace(new RegExp('<\\?php', 'g'),     '#linkerr_tag_open#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('\\?>', 'g'),        '#linkerr_tag_close#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?php', 'g'),  '#linkerr_tag_open#');
-                            commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?', 'g'),     '#linkerr_tag_open#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?PHP', 'g'),  '#linkerr_tag_open#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?Php', 'g'),  '#linkerr_tag_open#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?', 'g'),     '#linkerr_tag_open#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('\\?&gt;', 'g'),     '#linkerr_tag_close#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('<rss>', 'g'),       '#linkerr_tag_open__rss#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('</rss>', 'g'),      '#linkerr_tag_close__rss#');
@@ -104,7 +104,7 @@ const main = async () => {
                             let countOpenPHPTags = (commentRowParsed.match(/#linkerr_tag_open#/g) || []).length;
                             let countClosePHPTags = (commentRowParsed.match(/#linkerr_tag_close#/g) || []).length;
 
-                            if (countOpenPHPTags !== 0 && countClosePHPTags === 0) {
+                            if ((countOpenPHPTags !== 0 && countClosePHPTags === 0) || (countOpenPHPTags === countClosePHPTags + 1)) {
                                 commentRowParsed = commentRowParsed.replace(new RegExp('</code>', 'g'), '#linkerr_tag_close#</code>');
                             }
                             commentRowParsed = commentRowParsed.replace(new RegExp('<code>', 'g'), '');
