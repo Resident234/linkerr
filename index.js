@@ -95,6 +95,8 @@ const main = async () => {
                             commentRowParsed = commentRowParsed.replace(/&apos;&lt;\?php&apos;/gm, '#linkerr_tag_open___in_quote#');
                             commentRowParsed = commentRowParsed.replace(/&quot;&lt;\?php&quot;/gm, '#linkerr_tag_open___in_quote#');
                             commentRowParsed = commentRowParsed.replace(/&quot;&lt;\?php &quot;/gm, '#linkerr_tag_open___in_quote_type2#');
+                            commentRowParsed = commentRowParsed.replace(/&apos;\?&gt;&apos;/gm, '#linkerr_tag_close___in_quote#');
+                            commentRowParsed = commentRowParsed.replace(/&quot;\?&gt;&quot;/gm, '#linkerr_tag_close___in_quote#');
                             commentRowParsed = commentRowParsed.replace(/the &lt;code&gt; tag too/gm, '#linkerr_tag___code#');
 
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; \\?&gt', 'g'), '#linkerr_tag__xml_version_utf8#');
