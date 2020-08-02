@@ -72,20 +72,30 @@ const main = async () => {
                         for (let i = 0; i < parsedData.comments.length; i++) {
                             let commentRowParsed = parsedData.comments[i];
                             commentRowParsed = commentRowParsed.replace(/\n/g, '');
-
                             commentRowParsed = commentRowParsed.replace(/<br>/gm, '=br=');
 
-                            commentRowParsed = commentRowParsed.replace(new RegExp('<\\?php', 'g'), '#linkerr_tag__php#');
-                            commentRowParsed = commentRowParsed.replace(new RegExp('\\?>', 'g'), '#php__linkerr_tag#');
-                            commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?php', 'g'), '#linkerr_tag__php#');
-                            commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?PHP', 'g'), '#linkerr_tag__php#');
-                            commentRowParsed = commentRowParsed.replace(new RegExp('\\?&gt;', 'g'), '#php__linkerr_tag#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; \\?&gt', 'g'), '#linkerr_tag__xml_version_utf8#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;\\?&gt', 'g'), '#linkerr_tag__xml_version_utf8#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?xml version=&apos;1.0&apos; encoding=&apos;UTF-8&apos;\\?&gt', 'g'), '#linkerr_tag__xml_version_utf8#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?xml version=&quot;1.0&quot;\\?&gt', 'g'), '#linkerr_tag__xml_version#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?xml version=&apos;1.0&apos;\\?&gt', 'g'), '#linkerr_tag__xml_version#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?xml version=\\\\&quot;1.0\\\\&quot; encoding=\\\\&quot;utf-8\\\\&quot; \\?&gt', 'g'), '#linkerr_tag__xml_version_utf8_lower_case#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('!DOCTYPE.\\+\\?&gt', 'g'), '#linkerr_tag__doctype#');
 
-                            let countOpenPHPTags = (commentRowParsed.match(/#linkerr_tag__php#/g) || []).length;
-                            let countClosePHPTags = (commentRowParsed.match(/#php__linkerr_tag#/g) || []).length;
+
+                            commentRowParsed = commentRowParsed.replace(new RegExp('<\\?php', 'g'),     '#linkerr_tag_open#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('\\?>', 'g'),        '#linkerr_tag_close#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?php', 'g'),  '#linkerr_tag_open#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?PHP', 'g'),  '#linkerr_tag_open#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('\\?&gt;', 'g'),     '#linkerr_tag_close#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('<rss>', 'g'),       '#linkerr_tag_open__rss#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('</rss>', 'g'),      '#linkerr_tag_close__rss#');
+
+                            let countOpenPHPTags = (commentRowParsed.match(/#linkerr_tag_open#/g) || []).length;
+                            let countClosePHPTags = (commentRowParsed.match(/#linkerr_tag_close#/g) || []).length;
 
                             if (countOpenPHPTags !== 0 && countClosePHPTags === 0) {
-                                commentRowParsed = commentRowParsed.replace(new RegExp('</code>', 'g'), '#php__linkerr_tag#</code>');
+                                commentRowParsed = commentRowParsed.replace(new RegExp('</code>', 'g'), '#linkerr_tag_close#</code>');
                             }
                             commentRowParsed = commentRowParsed.replace(new RegExp('<code>', 'g'), '');
                             commentRowParsed = commentRowParsed.replace(new RegExp('</code>', 'g'), '');
@@ -95,7 +105,7 @@ const main = async () => {
                             //content = content.replace(/[br]/gm, '\n'); - внутри [php ... php]
                             //content = content.replace(/[br]/gm, '<br>'); - везде
 
-                            let arPHPCode = commentRowParsed.match(/(#linkerr_tag__php#(.*)#php__linkerr_tag#)/g);
+                            let arPHPCode = commentRowParsed.match(/(#linkerr_tag_open#(.*)#linkerr_tag_close#)/g);
                             if (arPHPCode !== null) {
                                 for (let i = 0; i < arPHPCode.length; i++) {
                                     let arPHPCodeReplaced = arPHPCode[i].replace(/=br=/gm, '\n');
@@ -109,13 +119,22 @@ const main = async () => {
                             }
                             commentRowParsed = commentRowParsed.replace(/=br=/gm, '<br>');
 
-                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__php#', 'g'), '\n\n```\n<?php');
-                            commentRowParsed = commentRowParsed.replace(new RegExp('#php__linkerr_tag#', 'g'), '?>\n```\n');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_open#', 'g'), '\n\n```\n<?php');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_close#', 'g'), '?>\n```\n');
+
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_open__rss#', 'g'), '<rss>');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_close__rss#', 'g'), '</rss>');
+
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__xml_version_utf8#', 'g'), '<?xml version="1.0" encoding="UTF-8" ?>');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__xml_version#', 'g'), '<?xml version="1.0"?>');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__xml_version_utf8_lower_case#', 'g'), '<?xml version=\\"1.0\\" encoding=\\"utf-8\\" ?>');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__doctype#', 'g'), '!DOCTYPE.+?>');
+
 
                             commentRowParsed = commentRowParsed.replace(new RegExp('&#xA0;', 'g'), ' ');
                             commentRowParsed = commentRowParsed.replace(new RegExp('&quot;', 'g'), '"');
 
-                            let contentRow = "\n\n" + commentRowParsed + "\n\n" + "#";
+                            let contentRow = "\n\n" + commentRowParsed + "\n\n" + "---";
                             content = content + contentRow;
                         }
 
