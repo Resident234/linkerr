@@ -98,6 +98,9 @@ const main = async () => {
                             commentRowParsed = commentRowParsed.replace(/&apos;\?&gt;&apos;/gm, '#linkerr_tag_close___in_quote#');
                             commentRowParsed = commentRowParsed.replace(/&quot;\?&gt;&quot;/gm, '#linkerr_tag_close___in_quote#');
                             commentRowParsed = commentRowParsed.replace(/the &lt;code&gt; tag too/gm, '#linkerr_tag___code#');
+                            commentRowParsed = commentRowParsed.replace(/\/\/\?&gt;/gm, '#linkerr_tag_close___with_comment#');
+                            commentRowParsed = commentRowParsed.replace(/contained \?&gt;/gm, '#linkerr_tag_close___in_text1#');
+                            commentRowParsed = commentRowParsed.replace(/the \?&gt;/gm, '#linkerr_tag_close___in_text2#');
 
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; \\?&gt', 'g'), '#linkerr_tag__xml_version_utf8#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;\\?&gt', 'g'), '#linkerr_tag__xml_version_utf8#');
@@ -111,7 +114,8 @@ const main = async () => {
                             commentRowParsed = commentRowParsed.replace(new RegExp('\\?\\?&gt;', 'g'), '#linkerr_tag__regexp3#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('&gt;<\/span>=&lt;', 'g'), '#linkerr_tag__regexp4#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('\\(\\?&gt;', 'g'), '#linkerr_tag__regexp5#');
-                            //commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?= &quot;Some text &quot; . str_repeat\\(&quot;_-x-_ &quot;, 32\\);;; \\?&gt;', 'g'), '#linkerr_tag__regexp6#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('\\^\\(\\?&gt;', 'g'), '#linkerr_tag__regexp6#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?php echo &apos;something&apos;; //comment \\?&gt;', 'g'), '#linkerr_tag__php_type1#');
 
 
                             commentRowParsed = commentRowParsed.replace(new RegExp('<\\?php', 'g'),     '#linkerr_tag_open#');
@@ -172,7 +176,8 @@ const main = async () => {
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__regexp3#', 'g'), '??>');
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__regexp4#', 'g'), '>=<');
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__regexp5#', 'g'), '(?>');
-                            //commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__regexp6#', 'g'), '``<?= "Some text " . str_repeat("_-x-_ ", 32);;; ?>``');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__regexp6#', 'g'), '^(?>');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__php_type1#', 'g'), '<?php echo \'something\'; //comment ?>');
 
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_open__eot#', 'g'), '<<<EOT');
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_close__eot#', 'g'), 'EOT;');
@@ -184,6 +189,9 @@ const main = async () => {
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_open___in_quote_type2#', 'g'), '"<?php "');
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_close___in_quote#', 'g'), '``?>``');
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag___code#', 'g'), 'the ``<code>`` tag too');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_close___with_comment#', 'g'), '//?>');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_close___in_text1#', 'g'), 'contained ?>');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_close___in_text2#', 'g'), 'the ?>');
 
                             commentRowParsed = commentRowParsed.replace(new RegExp('&#xA0;', 'g'), ' ');
                             commentRowParsed = commentRowParsed.replace(new RegExp('&quot;', 'g'), '"');
