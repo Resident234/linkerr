@@ -122,6 +122,7 @@ const main = async () => {
                             commentRowParsed = commentRowParsed.replace(new RegExp('\\?>', 'g'),        '#linkerr_tag_close#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?php', 'g'),  '#linkerr_tag_open#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\? php', 'g'),  '#linkerr_tag_open#');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('&lt;php', 'g'),  '#linkerr_tag_open#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?PHP', 'g'),  '#linkerr_tag_open#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?Php', 'g'),  '#linkerr_tag_open#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?', 'g'),     '#linkerr_tag_open#');
