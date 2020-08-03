@@ -101,6 +101,7 @@ const main = async () => {
                             commentRowParsed = commentRowParsed.replace(/\/\/\?&gt;/gm, '#linkerr_tag_close___with_comment#');
                             commentRowParsed = commentRowParsed.replace(/contained \?&gt;/gm, '#linkerr_tag_close___in_text1#');
                             commentRowParsed = commentRowParsed.replace(/the \?&gt;/gm, '#linkerr_tag_close___in_text2#');
+                            commentRowParsed = commentRowParsed.replace(/closing \?&gt;/gm, '#linkerr_tag_close___in_text3#');
 
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; \\?&gt', 'g'), '#linkerr_tag__xml_version_utf8#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;\\?&gt', 'g'), '#linkerr_tag__xml_version_utf8#');
@@ -193,6 +194,7 @@ const main = async () => {
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_close___with_comment#', 'g'), '//?>');
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_close___in_text1#', 'g'), 'contained ?>');
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_close___in_text2#', 'g'), 'the ?>');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_close___in_text3#', 'g'), 'closing ?>');
 
                             commentRowParsed = commentRowParsed.replace(new RegExp('&#xA0;', 'g'), ' ');
                             commentRowParsed = commentRowParsed.replace(new RegExp('&quot;', 'g'), '"');
