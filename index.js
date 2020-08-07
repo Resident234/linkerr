@@ -117,7 +117,7 @@ const main = async () => {
                             commentRowParsed = commentRowParsed.replace(new RegExp('\\(\\?&gt;', 'g'), '#linkerr_tag__regexp5#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('\\^\\(\\?&gt;', 'g'), '#linkerr_tag__regexp6#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?php echo &apos;something&apos;; //comment \\?&gt;', 'g'), '#linkerr_tag__php_type1#');
-
+                            commentRowParsed = commentRowParsed.replace(new RegExp('&lt;\\?php \\.\\.\\. \\?&gt;', 'g'), '#linkerr_tag__php_type2#');
 
                             commentRowParsed = commentRowParsed.replace(new RegExp('<\\?php', 'g'),     '#linkerr_tag_open#');
                             commentRowParsed = commentRowParsed.replace(new RegExp('\\?>', 'g'),        '#linkerr_tag_close#');
@@ -180,6 +180,7 @@ const main = async () => {
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__regexp5#', 'g'), '(?>');
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__regexp6#', 'g'), '^(?>');
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__php_type1#', 'g'), '<?php echo \'something\'; //comment ?>');
+                            commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag__php_type2#', 'g'), '``<?php ... ?>``');
 
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_open__eot#', 'g'), '<<<EOT');
                             commentRowParsed = commentRowParsed.replace(new RegExp('#linkerr_tag_close__eot#', 'g'), 'EOT;');
