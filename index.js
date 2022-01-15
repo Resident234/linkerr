@@ -68,6 +68,7 @@ const main = async () => {
                         spinner.succeed(`Page ${chalk.green(currentPage)} not exist`);
                     }
                 }
+                spinner.succeed(`DONE`);
             } catch (e) {
                 spinner.fail(e.message);
             }
