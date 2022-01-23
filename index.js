@@ -9,6 +9,7 @@ const path = require("path");
 const {parse} = require("./lib/parse");
 const {saveFile, saveFileForce, isFileAlreadyExist, createDirIfNotExist} = require("./lib/file-system");
 const {getCurrentDate} = require("./lib/time");
+const {savePage, saveHead} = require("./lib/save");
 
 const URL_UTILS = require("./lib/url");
 
@@ -39,36 +40,32 @@ const main = async () => {
 
                 createDirIfNotExist("output/" + fileNameBase);
                 let nav = [];
-                //пример страницы https://varlamov.ru/4304881.html
-                //node ./index.js -u https://varlamov.ru/ -s 4304881 -e 4304981
+                //пример страницы https://varlamov.ru/4308572.html - максимальный номер страницы
+                //node ./index.js -u https://varlamov.ru/ -s 26059 -e 4308600
+                //
                 for (let pageCurrentNumber = startPageNumber; pageCurrentNumber <= endPageNumber; pageCurrentNumber++) {
                     //@todo разделение на слой работы с файловой структурой и на слой работы с ссылками на внешний сайт
                     let currentPage = formatedURL + pageCurrentNumber + '.html';
-                    let parsedData = await parse(currentPage);
+                    parse(currentPage).then(parsedData => {
+                        if (!parsedData.is404) {
+                            spinner.succeed(`Page ${chalk.green(currentPage)} have been parsed`);
+                            let pageName = pageCurrentNumber + '.html';
+                            let currentFileName = pageName + ".md";
+                            nav["(" + currentPage + ")"] = "[" + parsedData.title + "]";
 
-                    if (!parsedData.is404) {
-                        spinner.succeed(`Page ${chalk.green(currentPage)} have been parsed`);
-                        let pageName = pageCurrentNumber + '.html';
-                        let currentFileName = pageName + ".md";
-                        nav["(" + currentPage + ")"] = "[" + parsedData.title + "]";
+                            let content = "# " + parsedData.title + "\n\n";
+                            content = content + "\n\n" + "[LINK](" + currentPage + ")";
 
-                        let content = "# " + parsedData.title + "\n\n";
-                        content = content + "\n\n" + "[LINK](" + currentPage + ")";
+                            Promise.all([savePage(content, outputPath, currentFileName), saveHead(content, outputPath, nav)]).then(() => {
+                                spinner.succeed(`Info saved at ${chalk.cyan(outputPath)}/${chalk.cyan(currentFileName)}`);
+                            })
 
-                        await saveFile(outputPath + '/pages', currentFileName, content);
-                        spinner.succeed(`Info saved at ${chalk.cyan(outputPath)}/${chalk.cyan(currentFileName)}`);
-
-                        content = "";
-                        for (var key in nav) {
-                            let contentRow = nav[key] + key + "\n\n";
-                            content = content + contentRow;
+                        } else {
+                            spinner.succeed(`Page ${chalk.green(currentPage)} not exist`);
                         }
-                        await saveFile(outputPath, 'README.md', content);
-                    } else {
-                        spinner.succeed(`Page ${chalk.green(currentPage)} not exist`);
-                    }
+                    });
                 }
-                spinner.succeed(`DONE`);
+
             } catch (e) {
                 spinner.fail(e.message);
             }
