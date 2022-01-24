@@ -7,11 +7,11 @@ const chalk = require("chalk");
 const path = require("path");
 
 const {parse} = require("./lib/parse");
-const {saveFile, saveFileForce, isFileAlreadyExist, createDirIfNotExist} = require("./lib/file-system");
-const {getCurrentDate} = require("./lib/time");
+const {createDirIfNotExist} = require("./lib/file-system");
 const {savePage, saveHead} = require("./lib/save");
 
 const URL_UTILS = require("./lib/url");
+const {getPage} = require("./lib/action");
 
 const main = async () => {
 
@@ -41,35 +41,22 @@ const main = async () => {
                 createDirIfNotExist("output/" + fileNameBase);
                 let nav = [];
                 //пример страницы https://varlamov.ru/4308572.html - максимальный номер страницы
-                //node ./index.js -u https://varlamov.ru/ -s 26059 -e 4308600
-                //
+                //node ./index.js -u https://varlamov.ru/ -s 102666 -e 4308600
+
+                let chunkIndex = 0;
+                let pagesActions = [];
                 for (let pageCurrentNumber = startPageNumber; pageCurrentNumber <= endPageNumber; pageCurrentNumber++) {
-                    //@todo разделение на слой работы с файловой структурой и на слой работы с ссылками на внешний сайт
-                    let currentPage = formatedURL + pageCurrentNumber + '.html';
-                    parse(currentPage).then(parsedData => {
-                        if (!parsedData.is404) {
-                            spinner.succeed(`Page ${chalk.green(currentPage)} have been parsed`);
-                            let pageName = pageCurrentNumber + '.html';
-                            let currentFileName = pageName + ".md";
-                            nav["(" + currentPage + ")"] = "[" + parsedData.title + "]";
-
-                            let content = "# " + parsedData.title + "\n\n";
-                            content = content + "\n\n" + "[LINK](" + currentPage + ")";
-
-                            Promise.all([savePage(content, outputPath, currentFileName), saveHead(content, outputPath, nav)]).then(() => {
-                                spinner.succeed(`Info saved at ${chalk.cyan(outputPath)}/${chalk.cyan(currentFileName)}`);
-                            })
-
-                        } else {
-                            spinner.succeed(`Page ${chalk.green(currentPage)} not exist`);
-                        }
-                    });
+                    pagesActions.push(getPage(pageCurrentNumber, formatedURL, spinner, nav, outputPath));
+                    chunkIndex++;
+                    if (chunkIndex === 100) {
+                        await Promise.all(pagesActions);
+                        chunkIndex = 0;
+                        pagesActions = [];
+                    }
                 }
-
             } catch (e) {
                 spinner.fail(e.message);
             }
-
         } else {
             console.log("URL is not valid!");
         }
