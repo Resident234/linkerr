@@ -22,6 +22,7 @@ const main = async () => {
         .option("-f, --fileName [File name]", "File name")
         .option("-e, --endNumber [End value of page number in url]", "End value of page number in url")
         .option("-s, --startNumber [Start value of page number in url]", "Start value of page number in url")
+        .option("-t --threadsCount [Number of threads running in parallel]", "Number of threads running in parallel")
         .parse(process.argv);
 
     const PARSE_SITE_URL = program.url;
@@ -37,18 +38,19 @@ const main = async () => {
                 const outputPath = program.output || path.join(__dirname, "/output/" + fileNameBase);
                 const endPageNumber = Number(program.endNumber) || 100;
                 const startPageNumber = Number(program.startNumber) || 1;
+                const threadsCount = Number(program.threadsCount) || 100;
 
                 createDirIfNotExist("output/" + fileNameBase);
                 let nav = [];
                 //пример страницы https://varlamov.ru/4308572.html - максимальный номер страницы
-                //node ./index.js -u https://varlamov.ru/ -s 102666 -e 4308600
+                //node ./index.js -u https://varlamov.ru/ -s 415522 -e 4308600
 
                 let chunkIndex = 0;
                 let pagesActions = [];
                 for (let pageCurrentNumber = startPageNumber; pageCurrentNumber <= endPageNumber; pageCurrentNumber++) {
                     pagesActions.push(getPage(pageCurrentNumber, formatedURL, spinner, nav, outputPath));
                     chunkIndex++;
-                    if (chunkIndex === 100) {
+                    if (chunkIndex === threadsCount) {
                         await Promise.all(pagesActions);
                         chunkIndex = 0;
                         pagesActions = [];
