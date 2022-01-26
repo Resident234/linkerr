@@ -7,11 +7,12 @@ const chalk = require("chalk");
 const path = require("path");
 
 const {parse} = require("./lib/parse");
-const {createDirIfNotExist} = require("./lib/file-system");
+const {createDirIfNotExist, getFilesList} = require("./lib/file-system");
 const {savePage, saveHead} = require("./lib/save");
 
 const URL_UTILS = require("./lib/url");
-const {getPage} = require("./lib/action");
+const {getPage, getHead} = require("./lib/action");
+const fs = require("fs");
 
 // todo Почему приложение иногда виснет - возможно из за сбоя соединения , предусмотреть это
 // todo Сохранение прогресса и продолжение выполнения с последней точки 
@@ -26,6 +27,7 @@ const main = async () => {
         .option("-e, --endNumber [End value of page number in url]", "End value of page number in url")
         .option("-s, --startNumber [Start value of page number in url]", "Start value of page number in url")
         .option("-t --threadsCount [Number of threads running in parallel]", "Number of threads running in parallel")
+        .option("-h --buildHead", "Build table of contents. If the option is active, then the table of contents will be assembled without parsing")
         .parse(process.argv);
 
     const PARSE_SITE_URL = program.url;
@@ -33,6 +35,7 @@ const main = async () => {
         if (URL_UTILS.isUrlValid(PARSE_SITE_URL)) {
             const formatedURL = URL_UTILS.formatToStandard(PARSE_SITE_URL);
             const spinner = ora();
+
             spinner.start(`Starting parse ${formatedURL}`);
 
             try {
@@ -46,22 +49,44 @@ const main = async () => {
                 createDirIfNotExist("output/" + fileNameBase);
                 let nav = [];
                 //пример страницы https://varlamov.ru/4308572.html - максимальный номер страницы
-                //node ./index.js -u https://varlamov.ru/ -s 415522 -e 4308600
+                //node ./index.js -u https://varlamov.ru/ -s 1 -e 4308600
 
                 let chunkIndex = 0;
                 let pagesActions = [];
-                for (let pageCurrentNumber = startPageNumber; pageCurrentNumber <= endPageNumber; pageCurrentNumber++) {
-                    pagesActions.push(getPage(pageCurrentNumber, formatedURL, spinner, nav, outputPath));
-                    chunkIndex++;
-                    if (chunkIndex === threadsCount) {
-                        await Promise.all(pagesActions);
-                        chunkIndex = 0;
-                        pagesActions = [];
+
+                if (program.buildHead) {
+                    let pagesNumbers = [];
+                    const files = getFilesList("output/" + fileNameBase + '/pages/');
+                    files.forEach((fileName) => {
+                        pagesNumbers.push(+fileName.replace(".html.md", ""));
+                    });
+                    for (const pageCurrentNumber of pagesNumbers) {
+                        //делаем запись в оглавление постепенно , по мере считывания всех спарсенных страниц
+                        //todo добавить для записи оглавления два режима - запись после выполнения чанка , запись после выполнения процесса
+                        pagesActions.push(getHead(pageCurrentNumber, formatedURL, spinner, nav, outputPath));
+                        chunkIndex++;
+                        if (chunkIndex === threadsCount) {
+                            await Promise.all(pagesActions);
+                            chunkIndex = 0;
+                            pagesActions = [];
+                        }
+                    }
+                } else {
+                    for (let pageCurrentNumber = startPageNumber; pageCurrentNumber <= endPageNumber; pageCurrentNumber++) {
+                        pagesActions.push(getPage(pageCurrentNumber, formatedURL, spinner, nav, outputPath));
+                        chunkIndex++;
+                        if (chunkIndex === threadsCount) {
+                            await Promise.all(pagesActions);
+                            chunkIndex = 0;
+                            pagesActions = [];
+                        }
                     }
                 }
             } catch (e) {
                 spinner.fail(e.message);
             }
+            // todo еще сборку оглавления нужно делать в конце парсинга
+
         } else {
             console.log("URL is not valid!");
         }
