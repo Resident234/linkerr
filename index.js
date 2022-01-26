@@ -13,6 +13,9 @@ const {savePage, saveHead} = require("./lib/save");
 const URL_UTILS = require("./lib/url");
 const {getPage} = require("./lib/action");
 
+// todo Почему приложение иногда виснет - возможно из за сбоя соединения , предусмотреть это
+// todo Сохранение прогресса и продолжение выполнения с последней точки 
+
 const main = async () => {
 
     program
